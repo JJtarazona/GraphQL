@@ -20,6 +20,15 @@ const resolver = {
 
       return usuarioId;
     },
+
+    obtenerProductos: async () => {
+      try {
+        const productos = await Producto.find({});
+        return productos;
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
   Mutation: {
     nuevoUsuario: async (_, { input }) => {

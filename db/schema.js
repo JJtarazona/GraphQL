@@ -31,6 +31,8 @@ const typeDefs = gql`
 
   type Query {
     obtenerUsuario(token: String!): Usuario
+
+    obtenerProductos: [Producto]
   }
 
   input AutenticarIpunt {
