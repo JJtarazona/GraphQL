@@ -1,5 +1,6 @@
 const Usuario = require("../models/usuario");
 const Producto = require("../models/productos");
+const Cliente = require("../models/cliente");
 
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -29,7 +30,17 @@ const resolver = {
         console.log(error);
       }
     },
+    obtenerProducto: async (_, { id }) => {
+      const producto = await Producto.findById(id);
+
+      if (!producto) {
+        throw new Error("El producto no existe");
+      }
+
+      return producto;
+    },
   },
+
   Mutation: {
     nuevoUsuario: async (_, { input }) => {
       const { email, password } = input;
@@ -83,6 +94,53 @@ const resolver = {
 
         // Guardarlo en la BD
         const resultado = await producto.save();
+        return resultado;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    actualizarProducto: async (_, { id, input }) => {
+      let producto = await Producto.findById(id);
+
+      if (!producto) {
+        throw new Error("El producto no existe");
+      }
+      producto = await Producto.findOneAndUpdate({ _id: id }, input, {
+        new: true,
+      });
+      return producto;
+    },
+
+    eliminarProducto: async (_, { id }) => {
+      let producto = await Producto.findById(id);
+
+      if (!producto) {
+        throw new Error("El producto no existe");
+      }
+
+      await Producto.findOneAndDelete({ _id: id });
+
+      return "El producto fue eliminado";
+    },
+
+    nuevoCliente: async (_, { input }, ctx) => {
+      const { email } = input;
+      //Verificar si el cliente ya existe
+
+      const cliente = await Cliente.findOne({ email });
+      if (cliente) {
+        throw new Error("El cliente ya existe");
+      }
+      const nuevoCliente = new Cliente(input);
+
+      // Asignar Vendedor
+      nuevoCliente.vendedor = ctx.usuario.id;
+
+      // Guardarlo en la BD
+      try {
+        const resultado = await nuevoCliente.save();
+
         return resultado;
       } catch (error) {
         console.log(error);
