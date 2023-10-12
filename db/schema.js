@@ -55,6 +55,11 @@ const typeDefs = gql`
     # Productos
     obtenerProductos: [Producto]
     obtenerProducto(id: ID!): Producto
+
+    # Clientes
+    obtenerClientes: [Cliente]
+    obtenerClienteVendedor: [Cliente]
+    obtenerCliente(id: ID!): Cliente
   }
 
   input AutenticarIpunt {

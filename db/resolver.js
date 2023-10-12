@@ -39,6 +39,42 @@ const resolver = {
 
       return producto;
     },
+
+    obtenerClientes: async () => {
+      try {
+        const clientes = await Cliente.find({});
+        return clientes;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    obtenerClienteVendedor: async (_, {}, ctx) => {
+      try {
+        const clientes = await Cliente.find({
+          vendedor: ctx.usuario.id.toString(),
+        });
+        return clientes;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    obtenerCliente: async (_, { id }, ctx) => {
+      //Revisaer si el cliente existe
+      const cliente = await Cliente.findById(id);
+
+      if (!cliente) {
+        throw new Error("El cliente no existe");
+      }
+
+      // Quien lo creo puede verlo
+      if (cliente.vendedor.toString() !== ctx.usuario.id) {
+        throw new Error("No tienes los permisos para ver esta informacion");
+      }
+
+      return cliente;
+    },
   },
 
   Mutation: {
