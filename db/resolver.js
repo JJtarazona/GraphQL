@@ -182,6 +182,40 @@ const resolver = {
         console.log(error);
       }
     },
+    actualizarCliente: async (_, { id, input }, ctx) => {
+      // verificar si el cliente existe
+      let cliente = await Cliente.findById(id);
+      if (!cliente) {
+        throw new Error("El cliente no existe");
+      }
+
+      //Verificar vendedor
+      if (cliente.vendedor.toString() !== ctx.usuario.id) {
+        throw new Error("No tienes los permisos para ver esta informacion");
+      }
+
+      //guardar los cambios
+      cliente = await Cliente.findOneAndUpdate({ _id: id }, input, {
+        new: true,
+      });
+      return cliente;
+    },
+
+    eliminarCliente: async (_, { id }, ctx) => {
+      let cliente = await Cliente.findById(id);
+      if (!cliente) {
+        throw new Error("El cliente no existe");
+      }
+
+      //Verificar vendedor
+      if (cliente.vendedor.toString() !== ctx.usuario.id) {
+        throw new Error("No tienes los permisos para ver esta informacion");
+      }
+
+      await Cliente.findOneAndDelete({ _id: id });
+
+      return "El cliente fue eliminado";
+    },
   },
 };
 
