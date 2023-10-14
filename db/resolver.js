@@ -1,6 +1,7 @@
 const Usuario = require("../models/usuario");
 const Producto = require("../models/productos");
 const Cliente = require("../models/cliente");
+const Pedido = require("../models/pedidos");
 
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -215,6 +216,25 @@ const resolver = {
       await Cliente.findOneAndDelete({ _id: id });
 
       return "El cliente fue eliminado";
+    },
+    nuevoPedido: async (_, { input }, ctx) => {
+      //Verificar si el cliente existe
+
+      let clienteExiste = await Cliente.findById(id);
+      if (!clienteExiste) {
+        throw new Error("El cliente no existe");
+      }
+
+      // verificar si el cliente es del vendedor
+      if (clienteExiste.vendedor.toString() !== ctx.usuario.id) {
+        throw new Error("No tienes los permisos para ver esta informacion");
+      }
+
+      // revisar el stock de los productos
+
+      // asignar un vendedor
+
+      // guardar en bd
     },
   },
 };
