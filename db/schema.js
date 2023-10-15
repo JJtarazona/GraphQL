@@ -30,7 +30,23 @@ const typeDefs = gql`
     email: String
     telefono: String
     vendedor: ID
-    creado: String
+  }
+
+  type Pedido {
+    id: ID
+    pedido: [PedidoGrupo]
+    total: Float
+    cliente: Cliente
+    vendedor: ID
+    fecha: String
+    estado: EstadoPedido
+  }
+
+  type PedidoGrupo {
+    id: ID
+    cantidad: Int
+    nombre: String
+    precio: Float
   }
 
   input UsuarioInput {
@@ -52,11 +68,17 @@ const typeDefs = gql`
     id: ID
     cantidad: Int
   }
+  input PedidoProductoInput {
+    id: ID
+    cantidad: Int
+    nombre: String
+    precio: Float
+  }
 
   input PedidoInput {
     pedido: [PedidoProductoInput]
-    total: Float!
-    cliente: ID!
+    total: Float
+    cliente: ID
     estado: EstadoPedido
   }
 
