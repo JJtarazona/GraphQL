@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const ClienteSchema = mongoose.Schema({
+const ClientesSchema = mongoose.Schema({
   nombre: {
     type: String,
     required: true,
@@ -24,7 +24,6 @@ const ClienteSchema = mongoose.Schema({
   },
   telefono: {
     type: String,
-    required: false,
     trim: true,
   },
   creado: {
@@ -38,4 +37,4 @@ const ClienteSchema = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Cliente", ClienteSchema);
+module.exports = mongoose.model("Cliente", ClientesSchema);

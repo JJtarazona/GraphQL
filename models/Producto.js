@@ -1,18 +1,16 @@
 const mongoose = require("mongoose");
 
-const ProductoSchema = mongoose.Schema({
+const ProductosSchema = mongoose.Schema({
   nombre: {
     type: String,
     required: true,
     trim: true,
   },
-
   existencia: {
     type: Number,
     required: true,
     trim: true,
   },
-
   precio: {
     type: Number,
     required: true,
@@ -24,4 +22,6 @@ const ProductoSchema = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Producto", ProductoSchema);
+ProductosSchema.index({ nombre: "text" });
+
+module.exports = mongoose.model("Producto", ProductosSchema);

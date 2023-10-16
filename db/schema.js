@@ -1,137 +1,157 @@
-const { gql } = require("apollo-server");
+const {  gql } = require('apollo-server');
 
-//Schema
+// Schema
 const typeDefs = gql`
-  type Usuario {
-    id: ID
-    nombre: String
-    apellido: String
-    email: String
-    creado: String
-  }
 
-  type Token {
-    token: String
-  }
+    type Usuario {
+        id: ID
+        nombre: String
+        apellido: String
+        email: String
+        creado: String
+    }
+    
+    type Token {
+        token: String
+    }
 
-  type Producto {
-    id: ID
-    nombre: String
-    existencia: Int
-    precio: Int
-    creado: String
-  }
+    type Producto {
+        id: ID
+        nombre: String
+        existencia: Int
+        precio: Float
+        creado: String
+    }
 
-  type Cliente {
-    id: ID
-    nombre: String
-    apellido: String
-    empresa: String
-    email: String
-    telefono: String
-    vendedor: ID
-  }
+    type Cliente {
+        id: ID
+        nombre: String
+        apellido: String
+        empresa: String
+        email: String
+        telefono: String
+        vendedor: ID
+    }
+    
+    type Pedido {
+        id: ID
+        pedido: [PedidoGrupo]
+        total: Float
+        cliente: Cliente
+        vendedor: ID
+        fecha: String
+        estado: EstadoPedido
+    }
 
-  type Pedido {
-    id: ID
-    pedido: [PedidoGrupo]
-    total: Float
-    cliente: Cliente
-    vendedor: ID
-    fecha: String
-    estado: EstadoPedido
-  }
+    type PedidoGrupo{
+        id: ID
+        cantidad: Int
+        nombre: String
+        precio: Float
+    }
 
-  type PedidoGrupo {
-    id: ID
-    cantidad: Int
-    nombre: String
-    precio: Float
-  }
+    type TopCliente {
+        total: Float
+        cliente: [Cliente]
+    }
 
-  input UsuarioInput {
-    nombre: String!
-    apellido: String!
-    email: String!
-    password: String!
-  }
+    type TopVendedor {
+        total: Float
+        vendedor: [Usuario]
+    }
 
-  input ClienteInput {
-    nombre: String!
-    apellido: String!
-    empresa: String!
-    email: String!
-    telefono: String
-  }
+    input UsuarioInput {
+        nombre: String!
+        apellido: String!
+        email: String!
+        password: String!
+    }
 
-  input ProductoInput {
-    id: ID
-    cantidad: Int
-  }
-  input PedidoProductoInput {
-    id: ID
-    cantidad: Int
-    nombre: String
-    precio: Float
-  }
+    input AutenticarInput{
+        email: String!
+        password: String!
+    }
 
-  input PedidoInput {
-    pedido: [PedidoProductoInput]
-    total: Float
-    cliente: ID
-    estado: EstadoPedido
-  }
+    input ProductoInput {
+        nombre: String!
+        existencia: Int!
+        precio: Float!
+    }
 
-  enum EstadoPedido {
-    PENDIENTE
-    COMPLETADO
-    CANCELADO
-  }
+    input ClienteInput {
+        nombre: String!
+        apellido: String!
+        empresa: String!
+        email: String!
+        telefono: String
+    }
 
-  type Query {
-    #Usuario
-    obtenerUsuario(token: String!): Usuario
+    input PedidoProductoInput {
+        id: ID
+        cantidad: Int
+        nombre: String
+        precio: Float
+    }
 
-    # Productos
-    obtenerProductos: [Producto]
-    obtenerProducto(id: ID!): Producto
+    input PedidoInput {
+        pedido: [PedidoProductoInput]
+        total: Float
+        cliente: ID
+        estado: EstadoPedido
+    }
 
-    # Clientes
-    obtenerClientes: [Cliente]
-    obtenerClienteVendedor: [Cliente]
-    obtenerCliente(id: ID!): Cliente
-  }
+    enum EstadoPedido {
+        PENDIENTE
+        COMPLETADO
+        CANCELADO
+    }
 
-  input AutenticarIpunt {
-    email: String!
-    password: String!
-  }
+    type Query {
+        #Usuarios
+        obtenerUsuario: Usuario
 
-  input ProductoInput {
-    nombre: String!
-    existencia: Int!
-    precio: Int!
-  }
+        # Productos
+        obtenerProductos: [Producto]
+        obtenerProducto(id: ID!) : Producto
 
-  type Mutation {
-    #Usuario
-    nuevoUsuario(input: UsuarioInput): Usuario
-    autenticarUsuario(input: AutenticarIpunt): Token
+        #Clientes
+        obtenerClientes: [Cliente]
+        obtenerClientesVendedor: [Cliente]
+        obtenerCliente(id: ID!): Cliente
 
-    # Productos
-    nuevoProducto(input: ProductoInput): Producto
-    actualizarProducto(id: ID!, input: ProductoInput): Producto
-    eliminarProducto(id: ID!): String
+        # Pedidos
+        obtenerPedidos: [Pedido]
+        obtenerPedidosVendedor: [Pedido]
+        obtenerPedido(id: ID!) : Pedido
+        obtenerPedidosEstado(estado: String!): [Pedido]
 
-    # Clientes
-    nuevoCliente(input: ClienteInput): Cliente
-    actualizarCliente(id: ID!, input: ClienteInput): Cliente
-    eliminarCliente(id: ID!): String
 
-    #Pedidos
-    nuevoPedido(input: PedidoInput): Pedido
-    #actualizarPedido(id: ID!, input: PedidoInput): Pedido
-  }
+        # Busquedas Avanzadas
+        mejoresClientes: [TopCliente]
+        mejoresVendedores: [TopVendedor]
+        buscarProducto(texto: String!) : [Producto]
+    }
+
+    type Mutation {
+        # Usuarios
+        nuevoUsuario(input: UsuarioInput) : Usuario
+        autenticarUsuario(input: AutenticarInput) : Token
+
+        # Productos
+        nuevoProducto(input: ProductoInput) : Producto
+        actualizarProducto( id: ID!, input : ProductoInput ) : Producto
+        eliminarProducto( id: ID! ) : String
+
+        # Clientes
+        nuevoCliente(input: ClienteInput) : Cliente
+        actualizarCliente(id: ID!, input: ClienteInput): Cliente
+        eliminarCliente(id: ID!) : String
+
+        # Pedidos
+        nuevoPedido(input: PedidoInput): Pedido
+        actualizarPedido(id: ID!, input: PedidoInput ) : Pedido
+        eliminarPedido(id: ID!) : String
+    }
 `;
 
 module.exports = typeDefs;
